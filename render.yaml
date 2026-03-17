@@ -3,8 +3,8 @@ services:
     name: sovereignroute-api
     runtime: python
     rootDir: apps/api
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    buildCommand: pip install -r requirements.txt && alembic upgrade head
+    startCommand: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: DATABASE_URL
         sync: false
