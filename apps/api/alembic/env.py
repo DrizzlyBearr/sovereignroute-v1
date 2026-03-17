@@ -12,7 +12,14 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-config.set_main_option("sqlalchemy.url", os.environ["DATABASE_URL"])
+# Convert psycopg:// to postgresql+psycopg2:// if needed
+db_url = os.environ["DATABASE_URL"]
+if db_url.startswith("postgresql+psycopg://"):
+    db_url = db_url.replace("postgresql+psycopg://", "postgresql+psycopg2://")
+elif db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql+psycopg2://")
+
+config.set_main_option("sqlalchemy.url", db_url)
 
 from app.core.base import Base
 from app.models import workspace, policy  # noqa: F401
