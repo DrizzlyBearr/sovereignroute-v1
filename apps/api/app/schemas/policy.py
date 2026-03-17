@@ -25,5 +25,5 @@ class PolicyOut(BaseModel):
         effective_date: datetime | None
         created_at: datetime | None
 
-    class Config:
-                from_attributes = True
+        class Config:
+            from_attributes = True
