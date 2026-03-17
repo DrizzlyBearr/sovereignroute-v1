@@ -2,20 +2,12 @@ from fastapi import FastAPI, Depends
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.core.database import engine
-from app.core.base import Base
 from app.core.deps import get_db
 from app.routers.policies import router as policies_router
 from app.routers.route import router as route_router
 from app.routers.workspaces import router as workspaces_router
 
 app = FastAPI(title="SovereignRoute API", version="0.1.0")
-
-
-# Create tables on startup (temporary for V1 scaffolding; later we'll use Alembic migrations)
-@app.on_event("startup")
-def create_tables() -> None:
-    Base.metadata.create_all(bind=engine)
 
 
 @app.get("/health")
