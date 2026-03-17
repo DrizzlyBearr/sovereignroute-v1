@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16
+    container_name: sovereignroute_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sovereignroute
+      POSTGRES_USER: sovereign
+      POSTGRES_PASSWORD: sovereign_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - sovereignroute_db_data:/var/lib/postgresql/data
+
+volumes:
+  sovereignroute_db_data:

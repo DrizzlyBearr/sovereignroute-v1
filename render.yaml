@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: sovereignroute-api
+    runtime: python
+    rootDir: apps/api
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sovereignroute-db
+          property: connectionString
+
+databases:
+  - name: sovereignroute-db
+    plan: free
+    databaseName: sovereignroute
+    user: sovereign
