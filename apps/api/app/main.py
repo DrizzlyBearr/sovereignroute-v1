@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -17,6 +18,17 @@ import app.models.workspace  # noqa: F401
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="SovereignRoute API", version="0.1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://sovereignroute-v1.vercel.app",
+        "http://localhost:5173",  # local dev
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health")
