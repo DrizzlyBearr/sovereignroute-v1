@@ -47,6 +47,13 @@ export async function listPolicies(workspaceId) {
   return request(`/workspaces/${workspaceId}/policies`)
 }
 
+export async function createPolicy(workspaceId, payload) {
+  return request(`/workspaces/${workspaceId}/policies`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
 export async function getWorkspace(workspaceId) {
   return request(`/workspaces/${workspaceId}`)
 }

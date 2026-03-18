@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { listPolicies } from '../api/client'
+import PolicyCreator from './PolicyCreator'
 
 const LEVEL_CONFIG = {
   prohibited: { label: 'Prohibited', color: '#DC2626', bg: '#FEF2F2' },
@@ -21,6 +22,7 @@ export default function PolicyViewer({ workspaceId }) {
   const [error, setError] = useState(null)
   const [filter, setFilter] = useState('all')
   const [expanded, setExpanded] = useState(null)
+  const [showCreator, setShowCreator] = useState(false)
 
   useEffect(() => {
     if (!workspaceId) return
@@ -30,6 +32,11 @@ export default function PolicyViewer({ workspaceId }) {
       .catch(e => setError(e.message))
       .finally(() => setLoading(false))
   }, [workspaceId])
+
+  function handlePolicyCreated(newPolicy) {
+    setPolicies(prev => [newPolicy, ...prev])
+    setShowCreator(false)
+  }
 
   const filtered = filter === 'all' ? policies : policies.filter(p => p.restriction_level === filter)
 
@@ -43,13 +50,34 @@ export default function PolicyViewer({ workspaceId }) {
 
   return (
     <div style={{ maxWidth: 720, margin: '0 auto' }}>
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: '#0F172A', margin: '0 0 8px' }}>
-          Policy Library
-        </h1>
-        <p style={{ color: '#64748B', fontSize: 15, margin: 0 }}>
-          Active regulatory policies governing routing decisions in this workspace.
-        </p>
+      {showCreator && (
+        <PolicyCreator
+          workspaceId={workspaceId}
+          onCreated={handlePolicyCreated}
+          onClose={() => setShowCreator(false)}
+        />
+      )}
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
+        <div>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#0F172A', margin: '0 0 8px' }}>
+            Policy Library
+          </h1>
+          <p style={{ color: '#64748B', fontSize: 15, margin: 0 }}>
+            Active regulatory policies governing routing decisions in this workspace.
+          </p>
+        </div>
+        <button
+          onClick={() => setShowCreator(true)}
+          style={{
+            padding: '9px 18px', borderRadius: 8, border: 'none',
+            background: '#1E40AF', color: '#fff',
+            fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap',
+          }}
+        >
+          + Add Policy
+        </button>
       </div>
 
       {/* Filter tabs */}
