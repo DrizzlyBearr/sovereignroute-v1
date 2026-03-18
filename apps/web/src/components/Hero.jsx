@@ -1,4 +1,4 @@
-export default function Hero({ onTryDemo }) {
+export default function Hero({ onTryDemo, onGetStarted }) {
   return (
     <div style={{ maxWidth: 720, margin: '0 auto', padding: '64px 0 48px' }}>
 
@@ -38,7 +38,7 @@ export default function Hero({ onTryDemo }) {
       {/* CTA */}
       <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <button
-          onClick={onTryDemo}
+          onClick={onGetStarted}
           style={{
             padding: '14px 28px',
             background: '#1E40AF',
@@ -52,11 +52,24 @@ export default function Hero({ onTryDemo }) {
             boxShadow: '0 4px 14px rgba(30,64,175,0.3)',
           }}
         >
-          Try the Simulator →
+          Get Started →
         </button>
-        <span style={{ fontSize: 13, color: '#94A3B8' }}>
-          No signup required · 34 policies · 12 countries
-        </span>
+        <button
+          onClick={onTryDemo}
+          style={{
+            padding: '14px 28px',
+            background: 'transparent',
+            color: '#475569',
+            border: '1.5px solid #E2E8F0',
+            borderRadius: 10,
+            fontSize: 15,
+            fontWeight: 600,
+            cursor: 'pointer',
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >
+          Try the demo
+        </button>
       </div>
 
       {/* Stats row */}

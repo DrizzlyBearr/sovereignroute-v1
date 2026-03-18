@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Hero from './components/Hero'
+import Onboarding from './components/Onboarding'
 import RouteSimulator from './components/RouteSimulator'
 import PolicyViewer from './components/PolicyViewer'
 import { loadConfig, saveConfig } from './api/client'
@@ -12,7 +13,12 @@ const TABS = [
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home')
-  const config = loadConfig()
+  const [config, setConfig] = useState(loadConfig)
+
+  function handleOnboardingComplete(workspaceId, apiKey) {
+    setConfig({ workspaceId, apiKey })
+    setActiveTab('simulator')
+  }
 
   // Dev-only config modal — only visible when workspace isn't pre-configured
   const [showConfig, setShowConfig] = useState(false)
@@ -92,23 +98,29 @@ export default function App() {
           </div>
         </div>
 
-        {/* Right side — Try Demo CTA */}
-        <button
-          onClick={handleTryDemo}
-          style={{
-            padding: '7px 16px',
-            borderRadius: 8,
-            border: 'none',
-            background: '#1E40AF',
-            color: '#fff',
-            fontSize: 13,
-            fontWeight: 600,
-            cursor: 'pointer',
-            fontFamily: 'Inter, sans-serif',
-          }}
-        >
-          Try Simulator →
-        </button>
+        {/* Right side */}
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={handleTryDemo}
+            style={{
+              padding: '7px 16px', borderRadius: 8, border: '1px solid #334155',
+              background: 'transparent', color: '#94A3B8',
+              fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            Try Demo
+          </button>
+          <button
+            onClick={() => setActiveTab('onboarding')}
+            style={{
+              padding: '7px 16px', borderRadius: 8, border: 'none',
+              background: '#1E40AF', color: '#fff',
+              fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            Get Started →
+          </button>
+        </div>
       </nav>
 
       {/* Dev config modal — only accessible if env vars aren't set */}
@@ -187,7 +199,10 @@ export default function App() {
 
       {/* Main content */}
       <main style={{ padding: '0 32px 64px', maxWidth: 1100, margin: '0 auto' }}>
-        {activeTab === 'home' && <Hero onTryDemo={handleTryDemo} />}
+        {activeTab === 'home' && <Hero onTryDemo={handleTryDemo} onGetStarted={() => setActiveTab('onboarding')} />}
+        {activeTab === 'onboarding' && (
+          <Onboarding onComplete={handleOnboardingComplete} />
+        )}
         {activeTab === 'simulator' && (
           <div style={{ paddingTop: 40 }}>
             <RouteSimulator workspaceId={config.workspaceId} />
