@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.deps import get_db, require_api_key
 from app.models.api_key import ApiKey
+from app.models.decision_log import DecisionLog
 from app.models.policy import Policy
 from app.models.workspace import Workspace
 from app.schemas.route import RoutePreviewRequest, RoutePreviewResponse
@@ -56,7 +57,7 @@ def preview_route_decision(
     policy = db.scalar(policy_stmt)
 
     if not policy:
-        return {
+        result = {
             "workspace_id": str(workspace_id),
             "country_code": payload.country_code,
             "data_type": payload.data_type,
@@ -70,15 +71,31 @@ def preview_route_decision(
                 "Decision defaults to low restriction. Verify manually before acting on this result."
             ),
         }
+    else:
+        result = {
+            "workspace_id": str(workspace_id),
+            "country_code": payload.country_code,
+            "data_type": payload.data_type,
+            "restriction_level": policy.restriction_level,
+            "routing_decision": ROUTING_DECISION_MAP.get(policy.restriction_level, "conditional"),
+            "matched": True,
+            "confidence": "verified",
+            "matched_policy_id": str(policy.id),
+            "notes": policy.notes,
+        }
 
-    return {
-        "workspace_id": str(workspace_id),
-        "country_code": payload.country_code,
-        "data_type": payload.data_type,
-        "restriction_level": policy.restriction_level,
-        "routing_decision": ROUTING_DECISION_MAP.get(policy.restriction_level, "conditional"),
-        "matched": True,
-        "confidence": "verified",
-        "matched_policy_id": str(policy.id),
-        "notes": policy.notes,
-    }
+    # Write immutable audit record
+    log = DecisionLog(
+        workspace_id=workspace_id,
+        country_code=payload.country_code,
+        data_type=payload.data_type,
+        routing_decision=result["routing_decision"],
+        restriction_level=result["restriction_level"],
+        matched=result["matched"],
+        matched_policy_id=policy.id if policy else None,
+        confidence=result["confidence"],
+    )
+    db.add(log)
+    db.commit()
+
+    return result

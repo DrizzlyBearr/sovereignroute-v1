@@ -13,6 +13,7 @@ from app.core.base import Base
 
 if TYPE_CHECKING:
     from app.models.api_key import ApiKey
+    from app.models.decision_log import DecisionLog
     from app.models.policy import Policy
 
 
@@ -49,6 +50,10 @@ class Workspace(Base):
         cascade="all, delete-orphan",
     )
     api_keys: Mapped[list["ApiKey"]] = relationship(
+        back_populates="workspace",
+        cascade="all, delete-orphan",
+    )
+    decision_logs: Mapped[list["DecisionLog"]] = relationship(
         back_populates="workspace",
         cascade="all, delete-orphan",
     )

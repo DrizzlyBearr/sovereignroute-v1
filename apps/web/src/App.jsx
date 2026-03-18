@@ -3,12 +3,14 @@ import Hero from './components/Hero'
 import Onboarding from './components/Onboarding'
 import RouteSimulator from './components/RouteSimulator'
 import PolicyViewer from './components/PolicyViewer'
+import AuditLog from './components/AuditLog'
 import { loadConfig, saveConfig } from './api/client'
 
 const TABS = [
   { id: 'home', label: 'Home', icon: '🏠' },
   { id: 'simulator', label: 'Route Simulator', icon: '⚡' },
   { id: 'policies', label: 'Policy Library', icon: '📋' },
+  { id: 'audit', label: 'Audit Log', icon: '🔍' },
 ]
 
 export default function App() {
@@ -211,6 +213,11 @@ export default function App() {
         {activeTab === 'policies' && (
           <div style={{ paddingTop: 40 }}>
             <PolicyViewer workspaceId={config.workspaceId} />
+          </div>
+        )}
+        {activeTab === 'audit' && (
+          <div style={{ paddingTop: 40 }}>
+            <AuditLog workspaceId={config.workspaceId} />
           </div>
         )}
       </main>

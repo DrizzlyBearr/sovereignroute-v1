@@ -7,7 +7,7 @@ function getConfig() {
   }
 }
 
-async function request(path, options = {}) {
+export async function request(path, options = {}) {
   const { apiKey } = getConfig()
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
