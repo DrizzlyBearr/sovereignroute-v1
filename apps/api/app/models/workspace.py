@@ -12,6 +12,7 @@ from sqlalchemy.sql import func
 from app.core.base import Base
 
 if TYPE_CHECKING:
+    from app.models.api_key import ApiKey
     from app.models.policy import Policy
 
 
@@ -44,6 +45,10 @@ class Workspace(Base):
     )
 
     policies: Mapped[list["Policy"]] = relationship(
+        back_populates="workspace",
+        cascade="all, delete-orphan",
+    )
+    api_keys: Mapped[list["ApiKey"]] = relationship(
         back_populates="workspace",
         cascade="all, delete-orphan",
     )

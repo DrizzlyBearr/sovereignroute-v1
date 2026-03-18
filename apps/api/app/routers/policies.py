@@ -5,7 +5,8 @@ from sqlalchemy import desc, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.core.deps import get_db
+from app.core.deps import get_db, require_api_key
+from app.models.api_key import ApiKey
 from app.models.policy import Policy
 from app.models.workspace import Workspace
 from app.schemas.policy import PolicyCreate, PolicyOut
@@ -25,6 +26,7 @@ def create_policy(
     workspace_id: UUID,
     payload: PolicyCreate,
     db: Session = Depends(get_db),
+    auth: ApiKey = Depends(require_api_key),
 ):
     workspace = _require_workspace(workspace_id, db)
 
@@ -58,7 +60,11 @@ def create_policy(
 
 
 @router.get("", response_model=list[PolicyOut])
-def list_policies(workspace_id: UUID, db: Session = Depends(get_db)):
+def list_policies(
+    workspace_id: UUID,
+    db: Session = Depends(get_db),
+    auth: ApiKey = Depends(require_api_key),
+):
     _require_workspace(workspace_id, db)
 
     stmt = (
