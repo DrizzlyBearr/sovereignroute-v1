@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from pydantic import BaseModel
 
@@ -8,9 +9,8 @@ class WorkspaceCreate(BaseModel):
     industry: str
     countries_json: dict
 
-
 class WorkspaceOut(BaseModel):
-    id: str
+    id: UUID
     name: str
     industry: str
     countries_json: dict
@@ -18,7 +18,6 @@ class WorkspaceOut(BaseModel):
 
     class Config:
         from_attributes = True
-
 
 class WorkspaceListOut(BaseModel):
     items: list[WorkspaceOut]
